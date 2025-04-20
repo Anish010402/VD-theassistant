@@ -4,34 +4,20 @@ import os
 import uuid
 from PyPDF2 import PdfReader
 
-# Configure Gemini API
+# --- CONFIGURATION ---
 genai.configure(api_key=st.secrets["API_KEY"])
 model = genai.GenerativeModel("gemini-1.5-pro")
 
-# System prompt
+# --- SYSTEM PROMPT ---
 system_prompt = {
     "role": "user",
     "parts": """
-You are a Compliance and Legal Assistant expert, purpose-built to support legal professionals, compliance officers, and corporate teams in the United States. You possess comprehensive knowledge of U.S. corporate law, data protection regulations, financial compliance frameworks, and sector-specific obligations.
-
-Your core responsibilities include:
-- Interpreting and summarizing U.S. federal, state, and industry-specific regulations (e.g., GDPR, HIPAA, SOX, CCPA, PCI DSS, SEC, FTC).
-- Drafting precise and professional legal and compliance documents (e.g., privacy policies, terms of service, NDAs, vendor contracts, audit checklists).
-- Identifying legal and regulatory risks and recommending practical, risk-based mitigation strategies.
-- Assisting with regulatory reporting, compliance tracking, due diligence, and audit preparedness.
-- Answering legal and compliance questions with clarity and accuracy, defaulting to U.S. legal context unless otherwise specified.
-
-Guidelines for responses:
-- Use clear, formal, and business-appropriate language suitable for legal and corporate audiences.
-- Include citations or references to relevant laws, codes, or regulatory bodies where applicable.
-- Always include a disclaimer that your responses are for informational purposes only and do not constitute legal advice.
-- Proactively request clarification when a query lacks sufficient detail or jurisdictional context.
-
-Default jurisdiction: United States (unless the user specifies otherwise).
+You are a Compliance and Legal Assistant expert, purpose-built to support legal professionals, compliance officers, and corporate teams...
+(Default jurisdiction: United States unless otherwise specified.)
 """
 }
 
-# Initialize session state
+# --- SESSION STATE INIT ---
 if "user_id" not in st.session_state:
     st.session_state["user_id"] = str(uuid.uuid4())
 
@@ -47,32 +33,99 @@ if "uploaded_docs" not in st.session_state:
 if "uploaded_texts" not in st.session_state:
     st.session_state["uploaded_texts"] = {}
 
-# Layout: Split screen for chat + doc preview
-col1, col2 = st.columns([2.5, 1.5])  # Chat wider, preview narrower
+# --- CUSTOM STYLES ---
+st.markdown("""
+<style>
+/* Reset layout padding */
+.block-container {
+    padding: 1.5rem 2rem 1.5rem 2rem;
+}
 
-# === LEFT SIDE: Chat + PDF Upload ===
-with col1:
-    st.title("📚 VD - Compliance & Legal Assistant")
-    st.markdown("💼 I can help with regulations, drafting documents, summaries, and more.")
+/* Chat layout styles */
+.chat-bubble-user {
+    background-color: #DCF8C6;
+    padding: 10px 15px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    max-width: 80%;
+    align-self: flex-end;
+    margin-left: auto;
+}
 
-    if st.button("🗑 Reset Chat"):
+.chat-bubble-bot {
+    background-color: #F1F0F0;
+    padding: 10px 15px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    max-width: 80%;
+    align-self: flex-start;
+    margin-right: auto;
+}
+
+#right-panel {
+    position: fixed;
+    top: 75px;
+    right: 0;
+    width: 320px;
+    height: 90%;
+    background-color: #ffffff;
+    border-left: 1px solid #ccc;
+    padding: 20px;
+    overflow-y: auto;
+    z-index: 998;
+}
+
+.pdf-preview {
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+    padding: 8px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    background-color: #f8f8f8;
+}
+
+/* Buttons */
+button[kind="secondary"] {
+    background-color: #f44336 !important;
+    color: white !important;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+}
+
+.stTextInput>div>div>input {
+    padding: 10px !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# --- TITLE + RESET ---
+st.title("📚 VD - Compliance & Legal Assistant")
+
+with st.container():
+    if st.button("🗑 Reset Chat", use_container_width=True):
         st.session_state["messages"] = [system_prompt]
         st.session_state["uploaded_docs"] = []
         st.session_state["uploaded_texts"] = {}
         st.rerun()
 
-    # Show chat history
+# --- CHAT BUBBLES ---
+with st.container():
     for msg in st.session_state["messages"][1:]:
-        role = "🧑" if msg["role"] == "user" else "🤖"
-        st.markdown(f"{role}:** {msg['parts']}")
+        if msg["role"] == "user":
+            st.markdown(f"<div class='chat-bubble-user'>{msg['parts']}</div>", unsafe_allow_html=True)
+        else:
+            st.markdown(f"<div class='chat-bubble-bot'>{msg['parts']}</div>", unsafe_allow_html=True)
 
-    # Text input
-    user_input = st.text_input(
-        "💬 How can I assist you today?",
-        key=f"chat_input_{len(st.session_state['messages'])}"
-    )
+# --- INPUT FORM WITH BUTTON ---
+with st.form(key="chat_form", clear_on_submit=True):
+    user_input = st.text_input("💬 Type your message", key="chat_input")
+    submitted = st.form_submit_button("Send")
 
-    if user_input and not st.session_state["input_submitted"]:
+    if submitted and user_input:
         st.session_state["messages"].append({"role": "user", "parts": user_input})
         try:
             response = model.generate_content(st.session_state["messages"])
@@ -82,38 +135,32 @@ with col1:
             with open(f"logs/{st.session_state['user_id']}.txt", "a", encoding="utf-8") as f:
                 f.write(f"\nUser: {user_input}\nBot: {response.text}\n")
 
-            st.session_state["input_submitted"] = True
-            st.rerun()
+            st.experimental_rerun()
 
         except Exception as e:
             st.error(f"Error: {str(e)}")
 
-    if st.session_state["input_submitted"]:
-        st.session_state["input_submitted"] = False
+# --- FILE UPLOADER ---
+uploaded_file = st.file_uploader("📄 Upload a PDF (e.g., contract, policy, legal doc)", type=["pdf"])
 
-    # PDF upload
-    uploaded_file = st.file_uploader("📄 Upload a PDF", type=["pdf"])
-    if uploaded_file:
-        file_name = uploaded_file.name
-        if file_name not in st.session_state["uploaded_docs"]:
-            reader = PdfReader(uploaded_file)
-            extracted = "\n\n".join([page.extract_text() for page in reader.pages if page.extract_text()])
-            short_text = extracted[:3000]  # Limit message size for context
-            st.session_state["messages"].append({
-                "role": "user",
-                "parts": f"Extracted from uploaded PDF '{file_name}':\n{short_text}"
-            })
-            st.session_state["uploaded_docs"].append(file_name)
-            st.session_state["uploaded_texts"][file_name] = extracted
-            st.rerun()
+if uploaded_file:
+    file_name = uploaded_file.name
+    if file_name not in st.session_state["uploaded_docs"]:
+        reader = PdfReader(uploaded_file)
+        extracted = "\n\n".join([page.extract_text() for page in reader.pages if page.extract_text()])
+        short_text = extracted[:3000]
+        st.session_state["messages"].append({
+            "role": "user",
+            "parts": f"Extracted from uploaded PDF '{file_name}':\n{short_text}"
+        })
+        st.session_state["uploaded_docs"].append(file_name)
+        st.session_state["uploaded_texts"][file_name] = extracted
+        st.experimental_rerun()
 
-# === RIGHT SIDE: PDF Previews ===
-with col2:
-    st.header("📄 Uploaded Previews")
-    if st.session_state["uploaded_docs"]:
-        for doc in st.session_state["uploaded_docs"]:
-            st.subheader(f"📘 {doc}")
-            with st.expander("Preview Text"):
-                st.markdown(f"<div style='white-space: pre-wrap; max-height: 300px; overflow-y: auto;'>{st.session_state['uploaded_texts'][doc][:5000]}</div>", unsafe_allow_html=True)
-    else:
-        st.markdown("No documents uploaded yet.")
+# --- FLOATING PREVIEW PANEL ---
+if st.session_state["uploaded_docs"]:
+    preview_html = "<div id='right-panel'><h4>📄 Uploaded Docs</h4>"
+    for doc in st.session_state["uploaded_docs"]:
+        preview_html += f"<b>📘 {doc}</b><div class='pdf-preview'>{st.session_state['uploaded_texts'][doc][:3000]}</div>"
+    preview_html += "</div>"
+    st.markdown(preview_html, unsafe_allow_html=True)
