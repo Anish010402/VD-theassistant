@@ -135,7 +135,7 @@ with st.form(key="chat_form", clear_on_submit=True):
             with open(f"logs/{st.session_state['user_id']}.txt", "a", encoding="utf-8") as f:
                 f.write(f"\nUser: {user_input}\nBot: {response.text}\n")
 
-            st.experimental_rerun()
+            st.rerun()
 
         except Exception as e:
             st.error(f"Error: {str(e)}")
@@ -155,7 +155,7 @@ if uploaded_file:
         })
         st.session_state["uploaded_docs"].append(file_name)
         st.session_state["uploaded_texts"][file_name] = extracted
-        st.experimental_rerun()
+        st.rerun()
 
 # --- FLOATING PREVIEW PANEL ---
 if st.session_state["uploaded_docs"]:
