@@ -3,7 +3,7 @@ import google.generativeai as genai
 import os
 import uuid
 from PyPDF2 import PdfReader
-
+st.set_page_config(page_title="Chatbot | Legal Assistant", layout="wide")
 # --- CONFIGURATION ---
 genai.configure(api_key=st.secrets["API_KEY"])
 model = genai.GenerativeModel("gemini-1.5-pro")
