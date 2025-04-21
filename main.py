@@ -20,4 +20,5 @@ Welcome to *VD Compliance & Legal Assistant* – your AI-powered helper for navi
 
 # ✅ Switch page on button click (must be run as multipage app)
 if st.button("👉 Get Started", use_container_width=True):
-    st.switch_page("app.py")
+    st.session_state.view = "chat"
+    st.rerun()
