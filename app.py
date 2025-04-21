@@ -9,12 +9,7 @@ genai.configure(api_key=st.secrets["API_KEY"])
 model = genai.GenerativeModel("gemini-1.5-pro")
 
 # --- Page Setup ---
-st.set_page_config(page_title="Chat | Legal Assistant", layout="wide")
-
-# --- Sidebar Navigation ---
-with st.sidebar:
-    st.page_link("main.py", label="🏠 Home")
-    st.page_link("app.py", label="💬 Chat Assistant")
+st.set_page_config(page_title="Chat | Legal Assistant", layout="wide")
 
 # --- System Prompt ---
 system_prompt = {
