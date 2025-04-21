@@ -1,6 +1,7 @@
 import streamlit as st
 
-st.set_page_config(page_title="Legal Assistant", layout="wide")
+if st.button("👉 Get Started", use_container_width=True):
+    st.switch_page("Chat Assistant")
 
 # --- HOME PAGE UI ---
 st.title("📚 VD - Compliance & Legal Assistant")
