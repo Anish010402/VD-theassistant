@@ -1,47 +1,59 @@
 import streamlit as st
 
 # --- Page Configuration ---
-st.set_page_config(page_title="VD - Compliance & Legal Assistant", layout="centered")
+st.set_page_config(
+    page_title="VD - Compliance & Legal Assistant",
+    layout="centered",
+    initial_sidebar_state="auto"
+)
 
 # Initialize session state
 if "view" not in st.session_state:
     st.session_state.view = "home"
 
+# --- Inject Dark Mode–Friendly Styles ---
+st.markdown("""
+    <style>
+        html, body, [class*="css"] {
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .big-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-color);
+            margin-bottom: 0.2rem;
+        }
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--secondary-text-color);
+            margin-bottom: 2rem;
+        }
+        .feature-card {
+            background-color: var(--block-background);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border-left: 5px solid #2c3eeb;
+        }
+        .disclaimer {
+            font-size: 0.85rem;
+            color: var(--secondary-text-color);
+            text-align: center;
+            margin-top: 2rem;
+        }
+    </style>
+
+    <script>
+        const root = document.documentElement;
+        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        root.style.setProperty('--text-color', isDark ? '#ffffff' : '#1a1a1a');
+        root.style.setProperty('--secondary-text-color', isDark ? '#cfcfcf' : '#5e6c84');
+        root.style.setProperty('--block-background', isDark ? '#1e1e1e' : '#f9f9f9');
+    </script>
+""", unsafe_allow_html=True)
+
 # --- Home View ---
 if st.session_state.view == "home":
-    st.markdown("""
-        <style>
-            .big-title {
-                font-size: 2.5rem;
-                font-weight: 800;
-                color: #2c3eeb;
-                margin-bottom: 0.2rem;
-            }
-            .subtitle {
-                font-size: 1.25rem;
-                color: #5e6c84;
-                margin-bottom: 2rem;
-            }
-            .feature-card {
-                background-color: #f9f9f9;
-                padding: 1rem 1.5rem;
-                border-radius: 12px;
-                margin-bottom: 1rem;
-                border-left: 5px solid #2c3eeb;
-            }
-            .get-started {
-                text-align: center;
-                margin-top: 2rem;
-            }
-            .disclaimer {
-                font-size: 0.85rem;
-                color: gray;
-                text-align: center;
-                margin-top: 2rem;
-            }
-        </style>
-    """, unsafe_allow_html=True)
-
     st.markdown('<div class="big-title">📖 VD - Compliance & Legal Assistant</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitle">Simplifying Regulations, One Chat at a Time</div>', unsafe_allow_html=True)
 
@@ -53,10 +65,9 @@ if st.session_state.view == "home":
     st.markdown('<div class="feature-card">💬 <strong>Answer compliance questions</strong> with U.S. legal context</div>', unsafe_allow_html=True)
     st.markdown('<div class="feature-card">📂 <strong>Analyze and preview PDF documents</strong> for legal review</div>', unsafe_allow_html=True)
 
-    with st.container():
-        if st.button("🚀 Get Started", use_container_width=True):
-            st.session_state.view = "chat"
-            st.experimental_rerun()
+    if st.button("🚀 Get Started", use_container_width=True):
+        st.session_state.view = "chat"
+        st.experimental_rerun()
 
     st.markdown('<div class="disclaimer">Advice provided is for informational purposes only and does not constitute legal advice.</div>', unsafe_allow_html=True)
 
