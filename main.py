@@ -1,24 +1,61 @@
 import streamlit as st
+from streamlit.runtime.scriptrunner import RerunException
+from streamlit.runtime.scriptrunner import get_script_run_ctx
 
-st.set_page_config(page_title="Legal Assistant", layout="wide")
+# --- Helper function to trigger rerun ---
+def rerun():
+    """Helper function to rerun the Streamlit script."""
+    ctx = get_script_run_ctx()
+    raise RerunException(ctx)
 
-st.title("📚 VD - Compliance & Legal Assistant")
-st.markdown("#### Simplifying Regulations, One Chat at a Time.")
+# --- State Initialization ---
+if "page" not in st.session_state:
+    st.session_state.page = "home"  # Default to home page
 
-st.markdown("""
-Welcome to *VD Compliance & Legal Assistant* – your AI-powered helper for navigating U.S. corporate regulations, drafting legal documents, and summarizing compliance materials.
+# --- Home Page ---
+if st.session_state.page == "home":
+    # Home page UI
+    st.title("📚 VD - Compliance & Legal Assistant")
+    st.markdown("#### Simplifying Regulations, One Chat at a Time.")
 
----
+    st.markdown("""
+    Welcome to *VD Compliance & Legal Assistant* – your AI-powered helper for navigating U.S. corporate regulations, drafting legal documents, and summarizing compliance materials.
 
-### 💡 Key Features:
-- 📄 Summarize regulations like GDPR, HIPAA, SOX, PCI DSS
-- 🧾 Draft NDAs, Privacy Policies, and Terms of Service
-- 🧠 Answer compliance questions with U.S. legal context
-- 📂 Analyze and preview PDF documents
-- ✅ Provide clear, non-binding legal insights
-""")
+    ### 🔍 What It Can Do:
+    - Summarize policies, contracts, and regulations
+    - Draft NDAs, Privacy Policies, and Terms of Service
+    - Help with U.S. regulatory frameworks (GDPR, HIPAA, SOX, PCI DSS, etc.)
+    - Extract and preview PDF documents
+    - Provide intelligent compliance guidance
 
-# ✅ Switch page on button click (must be run as multipage app)
-if st.button("👉 Get Started", use_container_width=True):
-    st.session_state.view = "chat"
-    st.rerun()
+    ---
+    💡 Whether you're a lawyer, compliance officer, or startup founder — this tool streamlines legal interpretation and document analysis in plain English.
+    """)
+
+    st.markdown("### 🚀 Ready to Chat?")
+    
+    # Button to navigate to Chat Assistant page
+    if st.button("👉 Get Started", use_container_width=True):
+        st.session_state.page = "chat"  # Change page state to "chat"
+        rerun()  # Trigger rerun to reload and switch to chat page
+
+# --- Chat Page ---
+elif st.session_state.page == "chat":
+    # Chat Assistant Page UI
+    st.title("💬 VD - Compliance Chat Assistant")
+
+    # Reset chat button
+    if st.button("🗑 Reset Chat"):
+        st.session_state.page = "home"  # Reset back to home page
+        rerun()  # Trigger rerun to go back to home page
+    
+    st.write("This is the chat assistant view.")
+    
+    # Example chat interface (this can be replaced with actual chat logic)
+    user_input = st.text_input("💬 Type your message")
+    if st.button("Send"):
+        st.write(f"You said: {user_input}")
+        st.write("Bot response: (This is where the bot response would appear)")
+
+    # You can implement your actual chat functionality here as needed
+
