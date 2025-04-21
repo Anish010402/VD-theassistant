@@ -1,92 +1,75 @@
 import streamlit as st
-from PIL import Image
-import time
 
-st.set_page_config(page_title="Legal Assistant", layout="wide", page_icon="📚")
+# --- Page Configuration ---
+st.set_page_config(page_title="VD - Compliance & Legal Assistant", layout="centered")
 
-# Background color and style tweaks using markdown
-def set_background():
+# Initialize session state
+if "view" not in st.session_state:
+    st.session_state.view = "home"
+
+# --- Home View ---
+if st.session_state.view == "home":
     st.markdown("""
         <style>
-            .main {
-                background-color: #f4f6f9;
+            .big-title {
+                font-size: 2.5rem;
+                font-weight: 800;
+                color: #2c3eeb;
+                margin-bottom: 0.2rem;
             }
-            .block-container {
-                padding-top: 2rem;
-                padding-bottom: 2rem;
+            .subtitle {
+                font-size: 1.25rem;
+                color: #5e6c84;
+                margin-bottom: 2rem;
             }
-            .stButton button {
-                border-radius: 8px;
-                font-weight: 600;
-                background-color: #0055A5;
-                color: white;
-                padding: 10px 20px;
+            .feature-card {
+                background-color: #f9f9f9;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                margin-bottom: 1rem;
+                border-left: 5px solid #2c3eeb;
             }
-            .stButton button:hover {
-                background-color: #004080;
+            .get-started {
+                text-align: center;
+                margin-top: 2rem;
+            }
+            .disclaimer {
+                font-size: 0.85rem;
+                color: gray;
+                text-align: center;
+                margin-top: 2rem;
             }
         </style>
     """, unsafe_allow_html=True)
 
-set_background()
+    st.markdown('<div class="big-title">📖 VD - Compliance & Legal Assistant</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitle">Simplifying Regulations, One Chat at a Time</div>', unsafe_allow_html=True)
 
-# Initialize view
-if "view" not in st.session_state:
-    st.session_state.view = "home"
+    st.markdown("Welcome to VD Compliance & Legal Assistant – your AI-powered helper for navigating U.S. corporate regulations, drafting legal documents, and summarizing compliance materials.")
+    st.markdown("---")
 
-# --- Home Page ---
-if st.session_state.view == "home":
-    col1, col2 = st.columns([2, 3])
-    with col1:
-        st.image("https://images.unsplash.com/photo-1554224154-22dec7ec8818", caption="Your Legal AI Partner", use_column_width=True)
-    with col2:
-        st.title("📚 VD - Compliance & Legal Assistant")
-        st.subheader("Simplifying Regulations, One Chat at a Time.")
-        st.write("""
-        Welcome to **VD Compliance & Legal Assistant** – your AI-powered partner for navigating U.S. corporate regulations, drafting legal documents, and understanding compliance materials.
-        """)
+    st.markdown('<div class="feature-card">📄 <strong>Summarize regulations</strong> like GDPR, HIPAA, SOX, PCI DSS</div>', unsafe_allow_html=True)
+    st.markdown('<div class="feature-card">🧾 <strong>Draft legal documents</strong> including NDAs, Privacy Policies, and Terms of Service</div>', unsafe_allow_html=True)
+    st.markdown('<div class="feature-card">💬 <strong>Answer compliance questions</strong> with U.S. legal context</div>', unsafe_allow_html=True)
+    st.markdown('<div class="feature-card">📂 <strong>Analyze and preview PDF documents</strong> for legal review</div>', unsafe_allow_html=True)
 
-        st.markdown("### 💡 Key Features:")
-        st.markdown("""
-        - 📄 Summarize regulations like **GDPR, HIPAA, SOX, PCI DSS**
-        - 🧾 Draft **NDAs, Privacy Policies, Terms of Service**
-        - 🧠 Answer compliance questions with **U.S. legal context**
-        - 📂 Analyze and preview **PDF documents**
-        - ✅ Provide clear, **non-binding legal insights**
-        """)
-
-        if st.button("👉 Get Started", use_container_width=True):
+    with st.container():
+        if st.button("🚀 Get Started", use_container_width=True):
             st.session_state.view = "chat"
-            st.rerun()
+            st.experimental_rerun()
 
-    # Image carousel simulation
-    st.markdown("### 🔄 Our Assistant in Action:")
-    img_urls = [
-        "https://images.unsplash.com/photo-1581091870632-7f63b2120baf",
-        "https://images.unsplash.com/photo-1573164713347-df1e007f11e3",
-        "https://images.unsplash.com/photo-1559027615-cd1a0f73946e"
-    ]
-    carousel_col = st.columns(len(img_urls))
-    for i, img_url in enumerate(img_urls):
-        with carousel_col[i]:
-            st.image(img_url, use_column_width=True)
+    st.markdown('<div class="disclaimer">Advice provided is for informational purposes only and does not constitute legal advice.</div>', unsafe_allow_html=True)
 
-# --- Chat Page ---
+# --- Chat View ---
 elif st.session_state.view == "chat":
     st.title("💬 VD - Compliance Chat Assistant")
 
-    col1, col2 = st.columns([8, 2])
-    with col2:
-        if st.button("🔄 Reset"):
-            st.session_state.view = "home"
-            st.rerun()
+    if st.button("🔁 Reset to Home"):
+        st.session_state.view = "home"
+        st.experimental_rerun()
 
-    st.markdown("###### Ask me anything about legal compliance, policies, or regulations:")
-
-    user_input = st.text_input("💬 Your Message")
+    st.write("This is the chat assistant view.")
+    user_input = st.text_input("💬 Type your message")
     if st.button("Send"):
-        st.markdown(f"**You:** {user_input}")
-        # Simulated bot response
-        with st.spinner("VD Assistant is typing..."):
-            time.sleep(1)
-        st.markdown(f"**VD Assistant:** This is a placeholder response. (Actual model response will be here.)")
+        st.write(f"You said: {user_input}")
+        st.write("Bot response: (This is where the bot response would appear)")
