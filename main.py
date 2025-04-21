@@ -1,12 +1,4 @@
 import streamlit as st
-from streamlit.runtime.scriptrunner import RerunException
-from streamlit.runtime.scriptrunner import get_script_run_ctx
-
-# --- Helper function to trigger rerun ---
-def rerun():
-    """Helper function to rerun the Streamlit script."""
-    ctx = get_script_run_ctx()
-    raise RerunException(ctx)
 
 # --- State Initialization ---
 if "page" not in st.session_state:
@@ -37,7 +29,7 @@ if st.session_state.page == "home":
     # Button to navigate to Chat Assistant page
     if st.button("👉 Get Started", use_container_width=True):
         st.session_state.page = "chat"  # Change page state to "chat"
-        rerun()  # Trigger rerun to reload and switch to chat page
+        st.experimental_rerun()  # Trigger rerun to reload and switch to chat page
 
 # --- Chat Page ---
 elif st.session_state.page == "chat":
@@ -47,7 +39,7 @@ elif st.session_state.page == "chat":
     # Reset chat button
     if st.button("🗑 Reset Chat"):
         st.session_state.page = "home"  # Reset back to home page
-        rerun()  # Trigger rerun to go back to home page
+        st.experimental_rerun()  # Trigger rerun to go back to home page
     
     st.write("This is the chat assistant view.")
     
@@ -58,4 +50,3 @@ elif st.session_state.page == "chat":
         st.write("Bot response: (This is where the bot response would appear)")
 
     # You can implement your actual chat functionality here as needed
-
