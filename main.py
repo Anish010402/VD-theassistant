@@ -1,29 +1,23 @@
 import streamlit as st
 
-# --- HOME PAGE UI ---
+st.set_page_config(page_title="Legal Assistant", layout="wide")
+
 st.title("📚 VD - Compliance & Legal Assistant")
 st.markdown("#### Simplifying Regulations, One Chat at a Time.")
 
 st.markdown("""
 Welcome to *VD Compliance & Legal Assistant* – your AI-powered helper for navigating U.S. corporate regulations, drafting legal documents, and summarizing compliance materials.
 
-### 🔍 What It Can Do:
-- Summarize policies, contracts, and regulations
-- Draft NDAs, Privacy Policies, and Terms of Service
-- Help with U.S. regulatory frameworks (GDPR, HIPAA, SOX, PCI DSS, etc.)
-- Extract and preview PDF documents
-- Provide intelligent compliance guidance
-
 ---
 
-💡 Whether you're a lawyer, compliance officer, or startup founder — this tool streamlines legal interpretation and document analysis in plain English.
-
+### 💡 Key Features:
+- 📄 Summarize regulations like GDPR, HIPAA, SOX, PCI DSS
+- 🧾 Draft NDAs, Privacy Policies, and Terms of Service
+- 🧠 Answer compliance questions with U.S. legal context
+- 📂 Analyze and preview PDF documents
+- ✅ Provide clear, non-binding legal insights
 """)
 
-# --- GET STARTED ---
-st.markdown("### 🚀 Ready to Chat?")
+# ✅ Switch page on button click (must be run as multipage app)
 if st.button("👉 Get Started", use_container_width=True):
-    st.switch_page("app.py")  # ✅ Triggered only on click
-
- # Use the sidebar label here
-
+    st.switch_page("app.py")
