@@ -1,7 +1,7 @@
 import streamlit as st
 
 if st.button("👉 Get Started", use_container_width=True):
-    st.switch_page("Chat Assistant")
+    st.switch_page("pages/app.py")
 
 # --- HOME PAGE UI ---
 st.title("📚 VD - Compliance & Legal Assistant")
