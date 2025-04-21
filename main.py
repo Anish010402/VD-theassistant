@@ -26,7 +26,7 @@ Welcome to *VD Compliance & Legal Assistant* – your AI-powered helper for navi
 st.markdown("### 🚀 Ready to Chat?")
 if st.button("👉 Get Started", use_container_width=True):
     with st.sidebar:
-    st.page_link("pages/app.py")
+        st.page_link("pages/app.py")
 
  # Use the sidebar label here
 
