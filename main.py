@@ -1,69 +1,52 @@
 import streamlit as st
-from PIL import Image
-import random
 
+# Set up the page configuration
 st.set_page_config(page_title="Legal Assistant", layout="wide")
 
-# --- Session state initialization ---
+# Initialize session state if not already initialized
 if "view" not in st.session_state:
-    st.session_state.view = "home"
-
-# --- Helper: Carousel-like tips ---
-tips = [
-    "📌 Tip: Use this assistant to quickly understand complex laws like GDPR or HIPAA!",
-    "📄 Tip: Draft professional NDAs, Privacy Policies, and more in seconds.",
-    "🧠 Tip: Ask compliance questions in plain English — we simplify legal jargon for you.",
-    "📂 Tip: Upload and summarize lengthy legal PDF documents instantly.",
-]
-current_tip = random.choice(tips)
+    st.session_state.view = "home"  # Default view
 
 # --- Home Page ---
 if st.session_state.view == "home":
-    col1, col2 = st.columns([2, 1])
-    with col1:
-        st.markdown("# 📚 VD - Compliance & Legal Assistant")
-        st.markdown("#### Simplifying Regulations, One Chat at a Time.")
-        st.markdown("Welcome to **VD Compliance & Legal Assistant** – your AI-powered helper for navigating U.S. corporate regulations, drafting legal documents, and summarizing compliance materials.")
-        st.markdown("##### 💡 Key Features:")
-        st.markdown("""
-        - 📄 Summarize regulations like **GDPR, HIPAA, SOX, PCI DSS**
-        - 🧾 Draft **NDAs**, **Privacy Policies**, and **Terms of Service**
-        - 🧠 Answer compliance questions in a U.S. legal context
-        - 📂 Analyze and preview PDF documents
-        - ✅ Get non-binding legal insights – fast and simple
-        """)
-        st.success(current_tip)
-        if st.button("👉 Get Started", use_container_width=True):
-            st.session_state.view = "chat"
-            st.experimental_rerun()
+    # Home page UI
+    st.title("📚 VD - Compliance & Legal Assistant")
+    st.markdown("#### Simplifying Regulations, One Chat at a Time.")
 
-    with col2:
-        st.image("https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.vecteezy.com%2Ffree-vector%2Flegal&psig=AOvVaw10AXZeGu3jmzt04xmNGnDQ&ust=1745286259076000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCNDQsZ2A6IwDFQAAAAAdAAAAABAE", width=250, caption="Your AI Legal Guide")
+    st.markdown("""
+    Welcome to VD Compliance & Legal Assistant – your AI-powered helper for navigating U.S. corporate regulations, drafting legal documents, and summarizing compliance materials.
+
+    ---
+
+    ### 💡 Key Features:
+    - 📄 Summarize regulations like GDPR, HIPAA, SOX, PCI DSS
+    - 🧾 Draft NDAs, Privacy Policies, and Terms of Service
+    - 🧠 Answer compliance questions with U.S. legal context
+    - 📂 Analyze and preview PDF documents
+    - ✅ Provide clear, non-binding legal insights
+    """)
+
+    # Button to navigate to Chat Assistant page
+    if st.button("👉 Get Started", use_container_width=True):
+        st.session_state.view = "chat"  # Switch to chat view
+        st.experimental_rerun()  # Trigger rerun to reload the app and switch the view
 
 # --- Chat Page ---
 elif st.session_state.view == "chat":
-    st.markdown("## 💬 VD - Compliance Chat Assistant")
-    st.markdown("Ask questions or get help drafting documents in real-time.")
+    # Chat Assistant Page UI
+    st.title("💬 VD - Compliance Chat Assistant")
 
-    # Top controls
-    col1, col2 = st.columns([1, 4])
-    with col1:
-        if st.button("🔄 Reset"):
-            st.session_state.view = "home"
-            st.experimental_rerun()
+    # Reset chat button (to go back to home page)
+    if st.button("🗑 Reset Chat"):
+        st.session_state.view = "home"  # Reset to home view
+        st.experimental_rerun()  # Trigger rerun to go back to home page
+    
+    st.write("This is the chat assistant view.")
+    
+    # Example chat interface (you can replace this with your actual chat logic)
+    user_input = st.text_input("💬 Type your message")
+    if st.button("Send"):
+        st.write(f"You said: {user_input}")
+        st.write("Bot response: (This is where the bot response would appear)")
 
-    st.markdown("---")
-
-    # Chat area
-    with st.container():
-        st.markdown("### 💬 Start a conversation")
-        st.markdown("Ask about compliance rules, draft documents, or upload a legal PDF.")
-
-        user_input = st.text_input("Your message")
-        if st.button("Send"):
-            st.write(f"🧑 You: {user_input}")
-            st.write("🤖 Bot: _(Response will appear here)_")
-
-    st.markdown("---")
-    st.info("Need to upload a document? That feature is coming soon!")
-
+    # You can implement the actual chat functionality here as needed
