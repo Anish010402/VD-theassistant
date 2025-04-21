@@ -1,21 +1,25 @@
 import streamlit as st
+import google.generativeai as genai
 
-# Set up the page configuration
+# -- Page config
 st.set_page_config(page_title="Legal Assistant", layout="wide")
 
-# Initialize session state if not already initialized
-if "view" not in st.session_state:
-    st.session_state.view = "home"  # Default view
+# -- API key setup (replace this with env var for production)
+genai.configure(api_key="AIzaSyA_z5f-qrOlSkIcKTk0T_AZoFJ1Ii1UfR0")
 
-# --- Home Page ---
+# -- Session state init
+if "view" not in st.session_state:
+    st.session_state.view = "home"
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
+
+# --- HOME PAGE ---
 if st.session_state.view == "home":
-    # Home page UI
     st.title("📚 VD - Compliance & Legal Assistant")
     st.markdown("#### Simplifying Regulations, One Chat at a Time.")
-
     st.markdown("""
     Welcome to VD Compliance & Legal Assistant – your AI-powered helper for navigating U.S. corporate regulations, drafting legal documents, and summarizing compliance materials.
-
+    
     ---
 
     ### 💡 Key Features:
@@ -25,28 +29,36 @@ if st.session_state.view == "home":
     - 📂 Analyze and preview PDF documents
     - ✅ Provide clear, non-binding legal insights
     """)
-
-    # Button to navigate to Chat Assistant page
+    
     if st.button("👉 Get Started", use_container_width=True):
-        st.session_state.view = "chat"  # Switch to chat view
-        st.experimental_rerun()  # Trigger rerun to reload the app and switch the view
+        st.session_state.view = "chat"
+        st.rerun()
 
-# --- Chat Page ---
+# --- CHAT PAGE ---
 elif st.session_state.view == "chat":
-    # Chat Assistant Page UI
     st.title("💬 VD - Compliance Chat Assistant")
 
-    # Reset chat button (to go back to home page)
     if st.button("🗑 Reset Chat"):
-        st.session_state.view = "home"  # Reset to home view
-        st.experimental_rerun()  # Trigger rerun to go back to home page
-    
-    st.write("This is the chat assistant view.")
-    
-    # Example chat interface (you can replace this with your actual chat logic)
-    user_input = st.text_input("💬 Type your message")
-    if st.button("Send"):
-        st.write(f"You said: {user_input}")
-        st.write("Bot response: (This is where the bot response would appear)")
+        st.session_state.view = "home"
+        st.session_state.chat_history = []
+        st.rerun()
 
-    # You can implement the actual chat functionality here as needed
+    user_input = st.text_input("💬 Type your message:")
+
+    if st.button("Send") and user_input.strip() != "":
+        st.session_state.chat_history.append({"role": "user", "content": user_input})
+
+        try:
+            model = genai.GenerativeModel("gemini-pro")
+            chat = model.start_chat(history=st.session_state.chat_history)
+            response = chat.send_message(user_input)
+            st.session_state.chat_history.append({"role": "model", "content": response.text})
+        except Exception as e:
+            st.error(f"❌ Error from Gemini: {e}")
+
+    # Display conversation history
+    for msg in st.session_state.chat_history:
+        if msg["role"] == "user":
+            st.write(f"👤 **You:** {msg['content']}")
+        else:
+            st.write(f"🤖 **Bot:** {msg['content']}")
