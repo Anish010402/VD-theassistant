@@ -38,7 +38,7 @@ if st.session_state.view == "home":
             st.experimental_rerun()
 
     with col2:
-        st.image("https://cdn-icons-png.flaticon.com/512/1973/1973808.png", width=250, caption="Your AI Legal Guide")
+        st.image("https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.vecteezy.com%2Ffree-vector%2Flegal&psig=AOvVaw10AXZeGu3jmzt04xmNGnDQ&ust=1745286259076000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCNDQsZ2A6IwDFQAAAAAdAAAAABAE", width=250, caption="Your AI Legal Guide")
 
 # --- Chat Page ---
 elif st.session_state.view == "chat":
